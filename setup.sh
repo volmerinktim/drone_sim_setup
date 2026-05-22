@@ -66,14 +66,11 @@ source /opt/ros/humble/setup.bash
 colcon build --symlink-install
 echo "source ~/px4_ws/install/setup.bash" >> ~/.bashrc
 
-# 7. ceop-grasp
-echo "[7/8] Building ceop-grasp..."
-git clone https://github.com/comrob/ceop-grasp.git ~/ceop-grasp
-cd ~/ceop-grasp
-bash install.sh
-sed -i 's/-std=c++11/-std=c++17/' Makefile
-make
-cd ~
+# 7. QGroundControl
+echo "[7/8] Downloading QGroundControl..."
+mkdir -p ~/ros2_ws
+wget -O ~/ros2_ws/QGroundControl.AppImage https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
+chmod +x ~/ros2_ws/QGroundControl.AppImage
 
 # 8. Flight scripts
 echo "[8/8] Downloading flight scripts..."
