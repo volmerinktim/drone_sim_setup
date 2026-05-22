@@ -69,8 +69,8 @@ echo "source ~/px4_ws/install/setup.bash" >> ~/.bashrc
 # 7. QGroundControl
 echo "[7/8] Downloading QGroundControl..."
 mkdir -p ~/ros2_ws
-wget -O ~/ros2_ws/QGroundControl.AppImage https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
-chmod +x ~/ros2_ws/QGroundControl.AppImage
+wget -O ~/ros2_ws/QGroundControl.AppImage
+https://github.com/mavlink/qgroundcontrol/releases/download/v4.3.0/QGroundControl.AppImage
 
 # 8. Flight scripts
 echo "[8/8] Downloading flight scripts..."
