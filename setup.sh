@@ -37,19 +37,27 @@ source /opt/ros/humble/setup.bash
 # 3. MicroXRCEAgent
 echo "[3/8] Installing MicroXRCEAgent..."
 pip3 install pyserial
-git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git ~/MicroXRCEAgent
-cd ~/MicroXRCEAgent && mkdir -p build && cd build
-cmake .. && make -j$(nproc) && sudo make install && sudo ldconfig
-cd ~
+if [ ! -d ~/MicroXRCEAgent ]; then
+    git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git ~/MicroXRCEAgent
+    cd ~/MicroXRCEAgent && mkdir -p build && cd build
+    cmake .. && make -j$(nproc) && sudo make install && sudo ldconfig
+    cd ~
+else
+    echo "MicroXRCEAgent already installed, skipping..."
+fi
 
 # 4. PX4-Autopilot
 echo "[4/8] Cloning PX4-Autopilot v1.15.4..."
-git clone --branch v1.15.4 --depth 1 \
-    https://github.com/PX4/PX4-Autopilot.git ~/PX4-Autopilot \
-    --recurse-submodules
-cd ~/PX4-Autopilot
-bash Tools/setup/ubuntu.sh --no-nuttx
-cd ~
+if [ ! -d ~/PX4-Autopilot ]; then
+    git clone --branch v1.15.4 --depth 1 \
+        https://github.com/PX4/PX4-Autopilot.git ~/PX4-Autopilot \
+        --recurse-submodules
+    cd ~/PX4-Autopilot
+    bash Tools/setup/ubuntu.sh --no-nuttx
+    cd ~
+else
+    echo "PX4-Autopilot already installed, skipping..."
+fi
 
 # 5. Gazebo
 echo "[5/8] Installing Gazebo..."
@@ -57,14 +65,18 @@ sudo apt-get install -y gazebo ros-humble-gazebo-ros-pkgs
 
 # 6. px4_ws
 echo "[6/8] Building px4_ws..."
-mkdir -p ~/px4_ws/src
-cd ~/px4_ws/src
-git clone --branch release/1.15 https://github.com/PX4/px4_msgs.git
-git clone https://github.com/Jaeyoung-Lim/px4-offboard.git px4_offboard
-cd ~/px4_ws
-source /opt/ros/humble/setup.bash
-colcon build --symlink-install
-echo "source ~/px4_ws/install/setup.bash" >> ~/.bashrc
+if [ ! -d ~/px4_ws ]; then
+    mkdir -p ~/px4_ws/src
+    cd ~/px4_ws/src
+    git clone --branch release/1.15 https://github.com/PX4/px4_msgs.git
+    git clone https://github.com/Jaeyoung-Lim/px4-offboard.git px4_offboard
+    cd ~/px4_ws
+    source /opt/ros/humble/setup.bash
+    colcon build --symlink-install
+    echo "source ~/px4_ws/install/setup.bash" >> ~/.bashrc
+else
+    echo "px4_ws already installed, skipping..."
+fi
 
 # 7. QGroundControl
 echo "[7/8] Downloading QGroundControl..."
