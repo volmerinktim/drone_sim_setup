@@ -22,20 +22,19 @@ tmux select-pane -t 1
 tmux split-window -h -t "$SESSION"       # Creates Pane 3 (bottom-right)
 
 # 5. Send the commands to the specific panes
-
 # PANE 0: MicroXRCEAgent Bridge
 send_cmd "$SESSION.0" "MicroXRCEAgent udp4 -p 8888"
 
 # PANE 1: Your Custom Flight Plan Script
-# Sourced and waiting 5 seconds to let the simulator and bridge warm up first
 tmux send-keys -t "$SESSION.1" "source /opt/ros/humble/setup.bash && source ~/px4_ws/install/setup.bash" C-m
 tmux send-keys -t "$SESSION.1" "python3 ~/flightpath_test.py"
 
-# PANE 2: PX4 SITL (Lockstep Enabled)
+# PANE 2: PX4 SITL + Gazebo Harmonic (run together via shell)
 tmux send-keys -t "$SESSION.2" "cd ~/PX4-Autopilot" C-m
-tmux send-keys -t "$SESSION.2" "make px4_sitl gz_x500" C-m
+tmux send-keys -t "$SESSION.2" "export GZ_SIM_RESOURCE_PATH=~/PX4-Autopilot/Tools/simulation/gz/models:~/PX4-Autopilot/Tools/simulation/gz/worlds" C-m
+tmux send-keys -t "$SESSION.2" "make px4_sitl none_iris & gz sim -r ~/PX4-Autopilot/Tools/simulation/gz/worlds/default.sdf" C-m
 
-# PANE 3: Ground Control Station (Disabled for headless stability)
+# PANE 3: Ground Control Station
 send_cmd "$SESSION.3" "~/ros2_ws/QGroundControl.AppImage"
 
 # --- THE MAGIC LAYOUT LINE ---
