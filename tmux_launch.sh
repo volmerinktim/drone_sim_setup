@@ -22,11 +22,11 @@ send_cmd "$SESSION.0" "MicroXRCEAgent udp4 -p 8888"
 # PANE 1: Your Custom Flight Plan Script
 tmux send-keys -t "$SESSION.1" "source /opt/ros/humble/setup.bash && source ~/px4_ws/install/setup.bash" C-m
 tmux send-keys -t "$SESSION.1" "python3 ~/flightpath_test.py"
-# PANE 2: PX4 SITL (connects to Gazebo on port 4560)
+# PANE 2: PX4 SITL + Gazebo Harmonic (x500)
 tmux send-keys -t "$SESSION.2" "cd ~/PX4-Autopilot" C-m
-tmux send-keys -t "$SESSION.2" "make px4_sitl none_iris" C-m
-# PANE 3: Gazebo Harmonic via simulation-gazebo script
-tmux send-keys -t "$SESSION.3" "python3 ~/PX4-Autopilot/Tools/simulation/gz/simulation-gazebo --world default" C-m
+tmux send-keys -t "$SESSION.2" "make px4_sitl gz_x500" C-m
+# PANE 3: Ground Control Station
+send_cmd "$SESSION.3" "~/ros2_ws/QGroundControl.AppImage"
 # --- THE MAGIC LAYOUT LINE ---
 tmux select-layout -t "$SESSION" tiled
 # Attach to session
