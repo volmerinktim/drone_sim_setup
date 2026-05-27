@@ -21,7 +21,7 @@ tmux split-window -h -t "$SESSION"       # Creates Pane 3 (bottom-right)
 send_cmd "$SESSION.0" "MicroXRCEAgent udp4 -p 8888"
 # PANE 1: Your Custom Flight Plan Script
 tmux send-keys -t "$SESSION.1" "source /opt/ros/humble/setup.bash && source ~/px4_ws/install/setup.bash" C-m
-tmux send-keys -t "$SESSION.1" "python3 ~/flightpath_test.py"
+tmux send-keys -t "$SESSION.1" "sleep 10 && python3 ~/flightpath_test.py"
 # PANE 2: PX4 SITL + Gazebo Harmonic (x500)
 tmux send-keys -t "$SESSION.2" "cd ~/PX4-Autopilot" C-m
 tmux send-keys -t "$SESSION.2" "make px4_sitl gz_x500" C-m
