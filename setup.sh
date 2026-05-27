@@ -53,9 +53,18 @@ if [ ! -d ~/PX4-Autopilot ]; then
 else
     echo "PX4-Autopilot already installed, skipping..."
 fi
-# 5. Gazebo
-echo "[5/9] Installing Gazebo..."
-sudo apt-get install -y gazebo ros-humble-gazebo-ros-pkgs
+# 5. Gazebo Harmonic
+echo "[5/9] Installing Gazebo Harmonic..."
+sudo curl https://packages.osrfoundation.org/gazebo.gpg \
+    --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] \
+    http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" \
+    | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y gz-harmonic
+# Add GZ resource path to bashrc
+GZ_PATH="export GZ_SIM_RESOURCE_PATH=\$HOME/PX4-Autopilot/Tools/simulation/gz/models:\$HOME/PX4-Autopilot/Tools/simulation/gz/worlds"
+grep -qxF "$GZ_PATH" ~/.bashrc || echo "$GZ_PATH" >> ~/.bashrc
 # 6. px4_ws
 echo "[6/9] Building px4_ws..."
 if [ ! -d ~/px4_ws ]; then
@@ -91,7 +100,20 @@ echo "============================================"
 echo " Setup complete! Restart your terminal, then:"
 echo ""
 echo " Step 1 - Generate flight path:"
+echo "   python3 ~/flightpath_test.py"
 echo ""
-echo " Step 2 - Launch simulation:"
-echo "   cd ~/ros2_ws && bash tmux_launch.sh"
+echo " Step 2 - Launch simulation (3 terminals):"
+echo ""
+echo "   Terminal 1 - PX4:"
+echo "     cd ~/PX4-Autopilot && make px4_sitl none_iris"
+echo ""
+echo "   Terminal 2 - Gazebo Harmonic:"
+echo "     gz sim -r ~/PX4-Autopilot/Tools/simulation/gz/worlds/default.sdf"
+echo ""
+echo "   Terminal 3 - Bridge:"
+echo "     cd ~/PX4-Autopilot/Tools/simulation/gz/simulation-gazebo"
+echo "     python3 simulation-gazebo --gz-sim --model x500"
+echo ""
+echo "   Or use the tmux launcher:"
+echo "     cd ~/ros2_ws && bash tmux_launch.sh"
 echo "============================================"
